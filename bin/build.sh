@@ -7,6 +7,7 @@ set -e
 build_folder=$1
 aws_ecr_repository_url_with_tag=$2
 aws_region=$3
+aws_ecr_url=$4
 
 # Allow overriding the aws region from system
 if [ "$aws_region" != "" ]; then
@@ -19,7 +20,7 @@ fi
 which aws > /dev/null || { echo 'ERROR: aws-cli is not installed' ; exit 1; }
 
 # Connect into aws
-aws ecr get-login-password --region $aws_extra_flags || { echo 'ERROR: aws ecr login failed' ; exit 1; }
+aws ecr get-login-password $aws_extra_flags | docker login --username AWS --password-stdin $aws_ecr_url || { echo 'ERROR: aws ecr login failed' ; exit 1; }
 
 # Check that docker is installed and running
 which docker > /dev/null && docker ps > /dev/null || { echo 'ERROR: docker is not running' ; exit 1; }
